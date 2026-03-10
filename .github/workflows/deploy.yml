@@ -12,20 +12,19 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Set up Python 3.11
-        uses: actions/setup-python@v5
-        with:
-          python-version: "3.11"
+      - name: Zip package
+        run: zip -r deploy.zip . -x "*.git*" -x "deploy.zip"
 
-      - name: Install dependencies
-        run: pip install -r requirements.txt
-
-      - name: Deploy to Azure Functions
-        uses: Azure/functions-action@v1
-        with:
-          app-name: inbox-marketing-to-trello-app
-          package: .
-          publish-profile: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
-          scm-do-build-during-deployment: true
-          enable-oryx-build: true
-          remote-build: true
+      - name: Deploy via zip deploy
+        env:
+          PUBLISH_PROFILE: ${{ secrets.AZURE_FUNCTIONAPP_PUBLISH_PROFILE }}
+        run: |
+          USERNAME=$(echo $PUBLISH_PROFILE | grep -oP 'userName="\K[^"]+' | head -1)
+          PASSWORD=$(echo $PUBLISH_PROFILE | grep -oP 'userPWD="\K[^"]+' | head -1)
+          curl -X POST \
+            "https://inbox-marketing-to-trello-app-had5hrcpaha4d3ej.scm.centralus-01.azurewebsites.net/api/publish?RemoteBuild=true" \
+            -u "$USERNAME:$PASSWORD" \
+            -H "Content-Type: application/zip" \
+            --data-binary @deploy.zip \
+            --fail \
+            -v
