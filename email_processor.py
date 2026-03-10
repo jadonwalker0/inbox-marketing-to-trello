@@ -145,7 +145,7 @@ Email Body:
         messages=[{"role": "user", "content": prompt}]
     )
 
-    raw = response.content[0].text.strip()
+    raw = response.content[0].text.encode('utf-8').decode('utf-8-sig').strip()
     logging.info(f"Claude raw response: {raw}")
 
     # Find the JSON object directly — works regardless of fencing
