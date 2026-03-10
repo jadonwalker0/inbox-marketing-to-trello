@@ -18,7 +18,7 @@ def process_email_request(req: func.HttpRequest) -> func.HttpResponse:
         }
         result = process_email(email_data)
         return func.HttpResponse(
-        json.dumps(result), status_code=200, mimetype="application/json"
+            json.dumps(result, default=str), status_code=200, mimetype="application/json"
         )
     except Exception as e:
         logging.error(f"Error: {e}")
