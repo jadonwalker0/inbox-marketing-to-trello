@@ -1,3 +1,5 @@
+from urllib import response
+
 import anthropic
 import json
 import os
@@ -145,6 +147,7 @@ Email Body:
     )
 
     raw = response.content[0].text.strip()
+    logging.info(f"Claude raw response: {raw}")
 
     # Safety: strip accidental markdown fences if Claude adds them
     if raw.startswith("```"):
@@ -152,6 +155,10 @@ Email Body:
         if raw.startswith("json"):
             raw = raw[4:]
     raw = raw.strip()
+
+    if not raw:
+        logging.error("Claude returned empty response")
+        raise ValueError("Claude returned empty response")
 
     parsed = json.loads(raw)
 
