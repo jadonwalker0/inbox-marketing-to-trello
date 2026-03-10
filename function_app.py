@@ -21,5 +21,7 @@ def process_email_request(req: func.HttpRequest) -> func.HttpResponse:
             json.dumps(result, default=str), status_code=200, mimetype="application/json"
         )
     except Exception as e:
+        import traceback
         logging.error(f"Error: {e}")
+        logging.error(f"Traceback: {traceback.format_exc()}")
         return func.HttpResponse(str(e), status_code=500)

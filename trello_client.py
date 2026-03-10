@@ -22,11 +22,14 @@ PRIORITY_COLORS = {
 
 
 def get_list_id(list_name: str = "Inbox") -> str:
-    """Get Trello list ID by name — falls back to first list if not found."""
-    lists = requests.get(
+    logging.info(f"Fetching Trello lists for board: {BOARD}")
+    response = requests.get(
         f"https://api.trello.com/1/boards/{BOARD}/lists",
         params={"key": KEY, "token": TOKEN}
-    ).json()
+    )
+    logging.info(f"Trello lists status: {response.status_code}")
+    logging.info(f"Trello lists body: {response.text[:200]}")
+    lists = response.json()
     for l in lists:
         if l["name"] == list_name:
             return l["id"]
