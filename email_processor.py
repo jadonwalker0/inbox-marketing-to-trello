@@ -167,11 +167,15 @@ Email Body:
             "reason": parsed.get("skip_reason", "Not actionable")
         }
 
+    logging.info("Email is actionable, proceeding to Trello")
+
     # TODO (MySQL - future): log email_data + parsed here
     # from db_logger import log_request
     # log_request(email_data, parsed)
 
+    logging.info("About to call create_trello_card")
     card_result = create_trello_card(parsed, email_data)
+    logging.info(f"Card result: {card_result}")
 
     return {
         "status": "success",
