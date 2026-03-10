@@ -1,5 +1,3 @@
-from urllib import response
-
 import anthropic
 import logging
 import json
