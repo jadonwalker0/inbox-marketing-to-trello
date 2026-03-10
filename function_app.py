@@ -5,7 +5,7 @@ from email_processor import process_email
  
 app = func.FunctionApp()
  
-@app.route(route="process-email", methods=["POST"])
+@app.route(route="process-email", methods=["POST"], auth_level=func.AuthLevel.ANONYMOUS)
 def process_email_request(req: func.HttpRequest) -> func.HttpResponse:
     logging.info("Email received for processing")
     try:
