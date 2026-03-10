@@ -1,6 +1,7 @@
 from urllib import response
 
 import anthropic
+import logging
 import json
 import os
 from trello_client import create_trello_card
