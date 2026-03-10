@@ -158,6 +158,7 @@ Email Body:
     json_str = raw[start:end]
     logging.info(f"Extracted JSON: {json_str[:100]}")
     parsed = json.loads(json_str)
+    logging.info(f"Parsed successfully: {parsed.get('card_title')}")
 
     # Not actionable — skip Trello, just return the reason
     if not parsed.get("is_actionable"):
