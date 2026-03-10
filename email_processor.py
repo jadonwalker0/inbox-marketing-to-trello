@@ -150,12 +150,11 @@ Email Body:
     raw = response.content[0].text.strip()
     logging.info(f"Claude raw response: {raw}")
 
-    # Safety: strip accidental markdown fences if Claude adds them
-    if raw.startswith("```"):
-        raw = raw.split("```")[1]
-        if raw.startswith("json"):
-            raw = raw[4:]
-    raw = raw.strip()
+    # Strip markdown fences
+    if "```json" in raw:
+        raw = raw.split("```json")[1].split("```")[0].strip()
+    elif "```" in raw:
+        raw = raw.split("```")[1].split("```")[0].strip()
 
     if not raw:
         logging.error("Claude returned empty response")
