@@ -150,17 +150,16 @@ Email Body:
     raw = response.content[0].text.strip()
     logging.info(f"Claude raw response: {raw}")
 
-    # Strip markdown fences
-    if "```json" in raw:
-        raw = raw.split("```json")[1].split("```")[0].strip()
-    elif "```" in raw:
-        raw = raw.split("```")[1].split("```")[0].strip()
+    # Find the JSON object directly — works regardless of fencing
+    start = raw.find("{")
+    end = raw.rfind("}") + 1
+    json_str = raw[start:end]
 
-    if not raw:
-        logging.error("Claude returned empty response")
-        raise ValueError("Claude returned empty response")
+    if not json_str:
+        logging.error("No JSON found in Claude response")
+        raise ValueError("No JSON found in Claude response")
 
-    parsed = json.loads(raw)
+    parsed = json.loads(json_str)
 
     # Not actionable — skip Trello, just return the reason
     if not parsed.get("is_actionable"):
