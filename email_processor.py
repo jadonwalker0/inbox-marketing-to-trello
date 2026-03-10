@@ -81,7 +81,7 @@ Reply tone guidelines:
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 OUTPUT FORMAT
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Respond ONLY with valid JSON. No preamble, no explanation, no markdown fences.
+CRITICAL: Respond ONLY with a raw JSON object. Absolutely no markdown, no ```json, no ``` fences, no explanation. Start your response with { and end with }. Nothing else.
 
 If NOT actionable:
 {
@@ -148,15 +148,15 @@ Email Body:
     raw = response.content[0].text.encode('utf-8').decode('utf-8-sig').strip()
     logging.info(f"Claude raw response: {raw}")
 
-    # Find the JSON object directly — works regardless of fencing
+    # Extract JSON regardless of any wrapping
     start = raw.find("{")
     end = raw.rfind("}") + 1
-    json_str = raw[start:end]
-
-    if not json_str:
-        logging.error("No JSON found in Claude response")
+    if start == -1 or end == 0:
+        logging.error(f"No JSON found. Raw: {raw}")
         raise ValueError("No JSON found in Claude response")
-
+    
+    json_str = raw[start:end]
+    logging.info(f"Extracted JSON: {json_str[:100]}")
     parsed = json.loads(json_str)
 
     # Not actionable — skip Trello, just return the reason
