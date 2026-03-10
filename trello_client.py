@@ -1,4 +1,5 @@
 import requests
+import logging
 import os
 
 KEY   = os.environ["TRELLO_API_KEY"]
@@ -104,7 +105,7 @@ def add_label(card_id: str, name: str, color: str):
 def create_trello_card(parsed: dict, email_data: dict) -> dict:
     """Create the Trello card and attach labels. Returns card URL and ID."""
 
-    card = requests.post(
+    response = requests.post(
         "https://api.trello.com/1/cards",
         params={
             "key":    KEY,
@@ -114,9 +115,12 @@ def create_trello_card(parsed: dict, email_data: dict) -> dict:
             "desc":   build_description(parsed),
             "pos":    "top",
         }
-    ).json()
-
+    )
+    logging.info(f"Trello response status: {response.status_code}")
+    logging.info(f"Trello response body: {response.text[:300]}")
+    card = response.json()
     card_id = card.get("id")
+    logging.info(f"Card ID: {card_id}")
 
     # Category label
     category = parsed.get("category", "GENERAL_MARKETING")
